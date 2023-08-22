@@ -40,6 +40,8 @@
             keys[event.key] = false;
         });
 
+        alert("warning shit drivers incoming")
+
         // Game loop
         function gameLoop() {
             // Clear the canvas
@@ -54,6 +56,8 @@
             // Add player movement logic here
         }
 
+        
+
         // Draw the player
         function drawPlayer() {
             context.fillStyle = player.color;
@@ -65,14 +69,26 @@
             if (keys["w"] && player.y > 0) {
                 player.y -= player.speed;
             }
-            if (keys["s"] && player.y < canvas.height - player.height) {
+            if (keys["s"] && player.y < canvas.height) {
                 player.y += player.speed;
             }
             if (keys["a"] && player.x > 0) {
                 player.x -= player.speed;
             }
-            if (keys["d"] && player.x < canvas.width - player.width) {
+            if (keys["d"] && player.x < canvas.width) {
                 player.x += player.speed;
+            }
+            if (player.x < player.width / 2) {
+                player.x = player.width / 2;
+            }
+            if (player.x > canvas.width - player.width / 2) {
+                player.x = canvas.width - player.width / 2;
+            }
+            if (player.y < player.height / 2) {
+                player.y = player.height / 2;
+            }
+            if (player.y > canvas.height - player.height / 2) {
+                player.y = canvas.height - player.height / 2;
             }
         }
 
