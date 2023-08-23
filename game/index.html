@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Game Example</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            
+        }
+        canvas {
+            display: block;
+            
+            border: 1px red solid;
+            background-image: url('images/background1.png');  
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        // Get the canvas element
+        const canvas = document.getElementById("gameCanvas");
+        const context = canvas.getContext("2d");
+
+        // Set canvas dimensions
+        canvas.width = 1000;
+        canvas.height = 600;
+
+        
+        // Keyboard input
+        const keys = {};
+
+        window.addEventListener("keydown", (event) => {
+            keys[event.key] = true;
+        });
+
+        window.addEventListener("keyup", (event) => {
+            keys[event.key] = false;
+        });
+
+        alert("warning shit drivers incoming")
+
+             const playerImage = new Image();
+             playerImage.src = "images/Miata-1.png";
+
+        // Game loop
+        function gameLoop() {
+            // Clear the canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+             // Update and draw the player
+             updatePlayer();
+             drawPlayer();
+
+             
+
+             // Update and draw the enemy
+             updateEnemy();
+             drawEnemy();
+
+              // Update player position
+        function updatePlayer() {
+            // Add player movement logic here
+        }
+
+        
+
+        // Draw the player
+        function drawPlayer() {
+            context.fillStyle = player.color;
+            context.drawImage(player.image, player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
+        }
+
+         // Draw the enemy
+         function drawEnemy() {
+            context.fillStyle = enemy.color;
+            context.fillRect(enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy.height);
+        }
+
+          // Update enemy position to follow the player
+          function updateEnemy() {
+            const dx = player.x - enemy.x;
+            const dy = player.y - enemy.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance > 1) {  // Avoid division by zero
+                enemy.x += (dx / distance) * enemy.speed;
+               // enemy.y += (dy / distance) * enemy.speed;//
+            }
+        }
+
+         // Update player position
+         function updatePlayer() {
+            if (keys["w"] && player.y > 350) {
+                player.y -= player.speed;
+            }
+            if (keys["s"] && player.y > 20) {
+                player.y += player.speed;
+            }
+            if (keys["a"] && player.x > 0) {
+                player.x -= player.speed;
+            }
+            if (keys["d"] && player.x < canvas.width) {
+                player.x += player.speed;
+            }
+            if (player.x < player.width / 2) {
+                player.x = player.width / 2;
+            }
+            if (player.x > canvas.width - player.width / 2) {
+                player.x = canvas.width - player.width / 2;
+            }
+            if (player.y < player.height / 2) {
+                player.y = player.height / 2;
+            }
+            if (player.y > canvas.height - player.height / 2) {
+                player.y = canvas.height - player.height / 2;
+            }
+        }
+
+            // Request the next frame
+            requestAnimationFrame(gameLoop);
+        }
+            // Player object
+            const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 50,
+            width: 180, //player width
+            height: 90, //player height
+            color: "blue", //player colour
+            speed: 5, //player speed
+            image: playerImage,
+        };
+         // Enemy object
+         const enemy = {
+            x: canvas.width / 2,
+            y: 380,
+            width: 40,
+            height: 40,
+            color: "red",
+            speed: 2  // Enemy movement speed
+        };
+
+        // Start the game loop
+        gameLoop();
+
+    </script>
+</body>
+</html>
