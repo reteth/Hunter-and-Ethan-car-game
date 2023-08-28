@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Canvas Game Example</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            
+
         }
+
         canvas {
             display: block;
-            
+
             border: 1px red solid;
-            background-image: url('images/background1.png');  
+            background-image: url('images/background1.png');
             background-size: cover;
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: #000;
         }
     </style>
 </head>
+
 <body>
     <canvas id="gameCanvas"></canvas>
-
+    <div id="score">Score: 0</div>
     <script>
         // Get the canvas element
         const canvas = document.getElementById("gameCanvas");
@@ -29,7 +40,7 @@
         canvas.width = 1000;
         canvas.height = 600;
 
-        
+
         // Keyboard input
         const keys = {};
 
@@ -43,12 +54,38 @@
 
         alert("warning shit drivers incoming")
 
-            const playerImage = new Image();
-            playerImage.src = "images/Miata-1.png";
+        const playerImage = new Image();
+        playerImage.src = "images/Miata-1.png";
 
-            const enemyImage = new Image();
-            enemyImage.src = "images/Prius-1.png";  
+        const enemyImage = new Image();
+        enemyImage.src = "images/Prius-1.png";
 
+        const backgroundImage = new Image();
+        backgroundImage.src = "images/sbhs.png"; // Update with actual path
+
+
+        const background = {
+            x: 0,
+            y: 0,
+            speed: 0.5 // Adjust the speed for parallax effect
+        };
+
+        // Update and draw the background
+        function updateBackground() {
+            // Adjust background position based on player's movement
+            background.x -= player.speed * background.speed;
+
+            if (background.x < -backgroundImage.width) {
+                background.x = 0;
+            }
+        }
+
+
+
+        function drawBackground() {
+            context.drawImage(backgroundImage, background.x, background.y, canvas.width + backgroundImage.width, canvas
+                .height / 2); // Draw full width
+        }
 
 
         // Game loop
@@ -56,91 +93,108 @@
             // Clear the canvas
             context.clearRect(0, 0, canvas.width, canvas.height);
 
-             // Update and draw the player
-             updatePlayer();
-             drawPlayer();
+            // Update and draw the player
+            updatePlayer();
+            drawPlayer();
 
-             
 
-             // Update and draw the enemy
-             updateEnemy();
-             drawEnemy();
+            // Update and draw the background
+            updateBackground();
+            drawBackground();
 
-               // Check collision
+
+            // Update and draw the enemy
+            updateEnemy();
+            drawEnemy();
+
+            // Check collision
             checkCollision();
 
-              // Update player position
-        function updatePlayer() {
-            // Add player movement logic here
-        }
 
-        
+            // Update and draw the score
+            updateScore();
 
-        // Draw the player
-        function drawPlayer() {
-            context.fillStyle = player.color;
-            context.drawImage(player.image, player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
-        }
+            // Update player position
+            function updatePlayer() {
+                // Add player movement logic here
+            }
 
-         // Draw the enemy
-         function drawEnemy() {
-            context.fillStyle = enemy.color;
-            context.drawImage(enemy.image, enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy.height);
-        }
 
-          // Update enemy position to follow the player
-          function updateEnemy() {
-            const dx = player.x - enemy.x;
-            const dy = player.y - enemy.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance > 1) {  // Avoid division by zero
-                enemy.x += (dx / distance) * enemy.speed;
-               enemy.y += (dy / distance) * enemy.speed;
+            // Draw the player
+            function drawPlayer() {
+                context.fillStyle = player.color;
+                context.drawImage(player.image, player.x - player.width / 2, player.y - player.height / 2, player.width,
+                    player.height);
             }
-        }
 
-         // Update player position
-         function updatePlayer() {
-            if (keys["w"] && player.y > 350) {
-                player.y -= player.speed;
+            // Draw the enemy
+            function drawEnemy() {
+                context.fillStyle = enemy.color;
+                context.drawImage(enemy.image, enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy
+                    .height);
             }
-            if (keys["s"] && player.y > 20) {
-                player.y += player.speed;
+
+            // Update enemy position to follow the player
+            function updateEnemy() {
+                const dx = player.x - enemy.x;
+                const dy = player.y - enemy.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance > 1) { // Avoid division by zero
+                    enemy.x += (dx / distance) * enemy.speed;
+                    enemy.y += (dy / distance) * enemy.speed;
+                }
             }
-            if (keys["a"] && player.x > 0) {
-                player.x -= player.speed;
+
+
+            // Update and draw the score counter
+            function updateScore() {
+                score++;
+                document.getElementById("score").textContent = `Score: ${score}`;
             }
-            if (keys["d"] && player.x < canvas.width) {
-                player.x += player.speed;
+
+            // Update player position
+            function updatePlayer() {
+                if (keys["w"] && player.y > 350) {
+                    player.y -= player.speed;
+                }
+                if (keys["s"] && player.y > 20) {
+                    player.y += player.speed;
+                }
+                if (keys["a"] && player.x > 0) {
+                    player.x -= player.speed;
+                }
+                if (keys["d"] && player.x < canvas.width) {
+                    player.x += player.speed;
+                }
+                if (player.x < player.width / 2) {
+                    player.x = player.width / 2;
+                }
+                if (player.x > canvas.width - player.width / 2) {
+                    player.x = canvas.width - player.width / 2;
+                }
+                if (player.y < player.height / 2) {
+                    player.y = player.height / 2;
+                }
+                if (player.y > canvas.height - player.height / 2) {
+                    player.y = canvas.height - player.height / 2;
+                }
             }
-            if (player.x < player.width / 2) {
-                player.x = player.width / 2;
-            }
-            if (player.x > canvas.width - player.width / 2) {
-                player.x = canvas.width - player.width / 2;
-            }
-            if (player.y < player.height / 2) {
-                player.y = player.height / 2;
-            }
-            if (player.y > canvas.height - player.height / 2) {
-                player.y = canvas.height - player.height / 2;
-            }
-        }
 
             // Request the next frame
             requestAnimationFrame(gameLoop);
         }
-            
-         // Enemy object
-         const enemy = {
+
+        // Enemy object
+        const enemy = {
             x: canvas.width / 2,
             y: 380,
             width: 120,
             height: 60,
             color: "red",
             image: enemyImage,
-            speed: 2  // Enemy movement speed
+            speed: 2 // Enemy movement speed
         };
         // Player object
         const player = {
@@ -153,7 +207,10 @@
             image: playerImage,
         };
 
-          // Check collision between player and enemy
+        // Score counter
+        let score = 0;
+
+        // Check collision between player and enemy
         function checkCollision() {
             const playerLeft = player.x - player.width / 2;
             const playerRight = player.x + player.width / 2;
@@ -172,18 +229,18 @@
                 playerBottom > enemyTop
             ) {
                 // Collision detected, reload the page
-                location.reload();
+                //  location.reload();
             }
         }
-          // Set enemy position away from player
-          function setEnemyPositionAwayFromPlayer() {
+        // Set enemy position away from player
+        function setEnemyPositionAwayFromPlayer() {
             const safeDistance = 200;
             do {
                 enemy.x = Math.random() * canvas.width;
-                
+
             } while (
                 Math.abs(enemy.x - player.x) < safeDistance
-                
+
             );
         }
 
@@ -192,7 +249,7 @@
 
         // Start the game loop
         gameLoop();
-
     </script>
 </body>
+
 </html>
