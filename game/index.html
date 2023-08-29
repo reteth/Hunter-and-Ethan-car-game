@@ -7,13 +7,13 @@
         body {
             margin: 0;
             overflow: hidden;
-
+             background-color: black;
         }
 
         canvas {
             display: block;
 
-            border: 1px red solid;
+            border: 3px white solid;
             background-image: url('images/background1.png');
             background-size: cover;
         }
@@ -37,8 +37,8 @@
         const context = canvas.getContext("2d");
 
         // Set canvas dimensions
-        canvas.width = 1000;
-        canvas.height = 600;
+        canvas.width = 800;
+        canvas.height = 500;
 
 
         // Keyboard input
@@ -52,30 +52,36 @@
             keys[event.key] = false;
         });
 
-        alert("warning shit drivers incoming")
-
+        alert("Welcome to The Invercargill driving experince")
+        alert('W A S D to move')
+        alert("try not to get hit by the bad drivers and make it to school")
         const playerImage = new Image();
         playerImage.src = "images/Miata-1.png";
 
         const enemyImage = new Image();
         enemyImage.src = "images/Prius-1.png";
 
-        const backgroundImage = new Image();
-        backgroundImage.src = "images/sbhs.png"; // Update with actual path
+       
+        
+        const backgroundImage1 = new Image();
+        backgroundImage1.src = "images/npd.png";  
 
+        const backgroundImage2 = new Image();
+        backgroundImage2.src = "images/sbhs.png";
 
         const background = {
             x: 0,
             y: 0,
-            speed: 0.5 // Adjust the speed for parallax effect
+            speed: 0.5, // Adjust the speed for parallax effect
+            currentBackground: backgroundImage1
         };
 
-        // Update and draw the background
-        function updateBackground() {
+         // Update and draw the background
+         function updateBackground() {
             // Adjust background position based on player's movement
             background.x -= player.speed * background.speed;
 
-            if (background.x < -backgroundImage.width) {
+            if (background.x < -background.currentBackground.width) {
                 background.x = 0;
             }
         }
@@ -83,8 +89,7 @@
 
 
         function drawBackground() {
-            context.drawImage(backgroundImage, background.x, background.y, canvas.width + backgroundImage.width, canvas
-                .height / 2); // Draw full width
+            context.drawImage(background.currentBackground, background.x, background.y, canvas.width + background.currentBackground.width, canvas.height / 2); // Draw full width
         }
 
 
@@ -148,18 +153,25 @@
             }
 
 
-            // Update and draw the score counter
-            function updateScore() {
-                score++;
-                document.getElementById("score").textContent = `Score: ${score}`;
+            
+        // Update and draw the score counter
+        function updateScore() {
+            score++;
+            document.getElementById("score").textContent = `Score: ${score}`;
+
+            // Change background when score reaches 3000
+            if (score >= 3000) {
+                background.currentBackground = backgroundImage2;
             }
+            enemy.speed = 1 + score / 10000;
+        }
 
             // Update player position
             function updatePlayer() {
-                if (keys["w"] && player.y > 350) {
+                if (keys["w"] && player.y > 270) {
                     player.y -= player.speed;
                 }
-                if (keys["s"] && player.y > 20) {
+                if (keys["s"] && player.y < 450) {
                     player.y += player.speed;
                 }
                 if (keys["a"] && player.x > 0) {
@@ -190,20 +202,20 @@
         const enemy = {
             x: canvas.width / 2,
             y: 380,
-            width: 120,
-            height: 60,
+            width: 100,
+            height: 50,
             color: "red",
             image: enemyImage,
-            speed: 2 // Enemy movement speed
+            speed: 2// Enemy movement speed
         };
         // Player object
         const player = {
             x: canvas.width / 2,
             y: canvas.height - 50,
-            width: 120, //player width
-            height: 60, //player height
+            width: 100, //player width
+            height: 50, //player height
             color: "blue", //player colour
-            speed: 5, //player speed
+            speed: 6, //player speed
             image: playerImage,
         };
 
@@ -229,7 +241,7 @@
                 playerBottom > enemyTop
             ) {
                 // Collision detected, reload the page
-                //  location.reload();
+                location.reload();
             }
         }
         // Set enemy position away from player
