@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Canvas Game Example</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
-             background-color: black;
+            background-color: black;
         }
 
         canvas {
             display: block;
-
             border: 3px white solid;
             background-image: url('images/background1.png');
             background-size: cover;
@@ -27,178 +25,48 @@
         }
     </style>
 </head>
-
 <body>
     <canvas id="gameCanvas"></canvas>
     <div id="score">Score: 0</div>
     <script>
-        // Get the canvas element
         const canvas = document.getElementById("gameCanvas");
         const context = canvas.getContext("2d");
-
-        // Set canvas dimensions
         canvas.width = 800;
         canvas.height = 500;
 
+        let collisionAlertShown = false;
+        let winAlertShown = false;
 
-        // Keyboard input
         const keys = {};
+        window.addEventListener("keydown", (event) => { keys[event.key] = true; });
+        window.addEventListener("keyup", (event) => { keys[event.key] = false; });
 
-        window.addEventListener("keydown", (event) => {
-            keys[event.key] = true;
-        });
-
-        window.addEventListener("keyup", (event) => {
-            keys[event.key] = false;
-        });
-
-        alert("Welcome to The Invercargill driving experince")
-        alert('W A S D to move')
-        alert("try not to get hit by the bad drivers and make it to school")
         const playerImage = new Image();
         playerImage.src = "images/Miata-1.png";
-
         const enemyImage = new Image();
         enemyImage.src = "images/Prius-1.png";
-
-       
-        
         const backgroundImage1 = new Image();
-        backgroundImage1.src = "images/npd.png";  
-
+        backgroundImage1.src = "images/npd.png";
         const backgroundImage2 = new Image();
         backgroundImage2.src = "images/sbhs.png";
 
         const background = {
             x: 0,
             y: 0,
-            speed: 0.5, // Adjust the speed for parallax effect
+            speed: 0.5,
             currentBackground: backgroundImage1
         };
 
-         // Update and draw the background
-         function updateBackground() {
-            // Adjust background position based on player's movement
-            background.x -= player.speed * background.speed;
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 50,
+            width: 100,
+            height: 50,
+            color: "blue",
+            speed: 6,
+            image: playerImage
+        };
 
-            if (background.x < -background.currentBackground.width) {
-                background.x = 0;
-            }
-        }
-
-
-
-        function drawBackground() {
-            context.drawImage(background.currentBackground, background.x, background.y, canvas.width + background.currentBackground.width, canvas.height / 2); // Draw full width
-        }
-
-
-        // Game loop
-        function gameLoop() {
-            // Clear the canvas
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Update and draw the player
-            updatePlayer();
-            drawPlayer();
-
-
-            // Update and draw the background
-            updateBackground();
-            drawBackground();
-
-
-            // Update and draw the enemy
-            updateEnemy();
-            drawEnemy();
-
-            // Check collision
-            checkCollision();
-
-
-            // Update and draw the score
-            updateScore();
-
-            // Update player position
-            function updatePlayer() {
-                // Add player movement logic here
-            }
-
-
-
-            // Draw the player
-            function drawPlayer() {
-                context.fillStyle = player.color;
-                context.drawImage(player.image, player.x - player.width / 2, player.y - player.height / 2, player.width,
-                    player.height);
-            }
-
-            // Draw the enemy
-            function drawEnemy() {
-                context.fillStyle = enemy.color;
-                context.drawImage(enemy.image, enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy
-                    .height);
-            }
-
-            // Update enemy position to follow the player
-            function updateEnemy() {
-                const dx = player.x - enemy.x;
-                const dy = player.y - enemy.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance > 1) { // Avoid division by zero
-                    enemy.x += (dx / distance) * enemy.speed;
-                    enemy.y += (dy / distance) * enemy.speed;
-                }
-            }
-
-
-            
-        // Update and draw the score counter
-        function updateScore() {
-            score++;
-            document.getElementById("score").textContent = `Score: ${score}`;
-
-            // Change background when score reaches 3000
-            if (score >= 3000) {
-                background.currentBackground = backgroundImage2;
-            }
-            enemy.speed = 1 + score / 10000;
-        }
-
-            // Update player position
-            function updatePlayer() {
-                if (keys["w"] && player.y > 270) {
-                    player.y -= player.speed;
-                }
-                if (keys["s"] && player.y < 450) {
-                    player.y += player.speed;
-                }
-                if (keys["a"] && player.x > 0) {
-                    player.x -= player.speed;
-                }
-                if (keys["d"] && player.x < canvas.width) {
-                    player.x += player.speed;
-                }
-                if (player.x < player.width / 2) {
-                    player.x = player.width / 2;
-                }
-                if (player.x > canvas.width - player.width / 2) {
-                    player.x = canvas.width - player.width / 2;
-                }
-                if (player.y < player.height / 2) {
-                    player.y = player.height / 2;
-                }
-                if (player.y > canvas.height - player.height / 2) {
-                    player.y = canvas.height - player.height / 2;
-                }
-            }
-
-            // Request the next frame
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Enemy object
         const enemy = {
             x: canvas.width / 2,
             y: 380,
@@ -206,23 +74,89 @@
             height: 50,
             color: "red",
             image: enemyImage,
-            speed: 2// Enemy movement speed
-        };
-        // Player object
-        const player = {
-            x: canvas.width / 2,
-            y: canvas.height - 50,
-            width: 100, //player width
-            height: 50, //player height
-            color: "blue", //player colour
-            speed: 6, //player speed
-            image: playerImage,
+            speed: 2
         };
 
-        // Score counter
         let score = 0;
 
-        // Check collision between player and enemy
+        
+
+        function updateBackground() {
+            background.x -= player.speed * background.speed;
+            if (background.x < -background.currentBackground.width) {
+                background.x = 0;
+            }
+        }
+
+        function drawBackground() {
+            context.drawImage(background.currentBackground, background.x, background.y,
+                              canvas.width + background.currentBackground.width, canvas.height / 1.8);
+        }
+
+        function updateScore() {
+            score++;
+            document.getElementById("score").textContent = `Score: ${score}`;
+            if (score >= 3000) {
+                background.currentBackground = backgroundImage2;
+            }
+            enemy.speed = 1 + score / 10000;
+            
+            if (score >= 5000 && !winAlertShown) {
+                winAlertShown = true;
+                alert("Congratulations! You won the game!");
+                location.reload();
+            }
+        }
+
+        function updatePlayer() {
+            if (keys["w"] && player.y > 270) player.y -= player.speed;
+            if (keys["s"] && player.y < 450) player.y += player.speed;
+            if (keys["a"] && player.x > 0) player.x -= player.speed;
+            if (keys["d"] && player.x < canvas.width) player.x += player.speed;
+            if (player.x < player.width / 2) player.x = player.width / 2;
+            if (player.x > canvas.width - player.width / 2) player.x = canvas.width - player.width / 2;
+            if (player.y < player.height / 2) player.y = player.height / 2;
+            if (player.y > canvas.height - player.height / 2) player.y = canvas.height - player.height / 2;
+        }
+
+        function drawPlayer() {
+            context.save(); // Save the current context state
+            // Flip horizontally if "A" key is pressed
+            if (keys["a"]) {
+                context.scale(-1, 1);
+                context.drawImage(player.image, -player.x - player.width / 2, player.y - player.height / 2,
+                                  player.width, player.height);
+            } else {
+                context.drawImage(player.image, player.x - player.width / 2, player.y - player.height / 2,
+                                  player.width, player.height);
+            }
+            context.restore(); // Restore the context state
+        }
+
+        function drawEnemy() {
+            context.save(); // Save the current context state
+            if (enemy.x > player.x) { // Flip horizontally if enemy is moving left
+                context.scale(-1,1);
+                context.drawImage(enemy.image, -enemy.x - enemy.width / 2, enemy.y - enemy.height / 2,
+                                  enemy.width, enemy.height);
+            } else {
+                context.drawImage(enemy.image, enemy.x - enemy.width / 2, enemy.y - enemy.height / 2,
+                                  enemy.width, enemy.height);
+            }
+            context.restore(); // Restore the context state
+        
+       
+        }
+        function updateEnemy() {
+            const dx = player.x - enemy.x;
+            const dy = player.y - enemy.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance > 1) {
+                enemy.x += (dx / distance) * enemy.speed;
+                enemy.y += (dy / distance) * enemy.speed;
+            }
+        }
+
         function checkCollision() {
             const playerLeft = player.x - player.width / 2;
             const playerRight = player.x + player.width / 2;
@@ -235,33 +169,42 @@
             const enemyBottom = enemy.y + enemy.height / 2;
 
             if (
+                !collisionAlertShown &&
                 playerLeft < enemyRight &&
                 playerRight > enemyLeft &&
                 playerTop < enemyBottom &&
                 playerBottom > enemyTop
             ) {
-                // Collision detected, reload the page
+                // Collision detected
+                collisionAlertShown = true; // Set the flag to true
+                alert("You got hit by the enemy! Game over.");
                 location.reload();
             }
         }
-        // Set enemy position away from player
+
         function setEnemyPositionAwayFromPlayer() {
             const safeDistance = 200;
             do {
                 enemy.x = Math.random() * canvas.width;
-
-            } while (
-                Math.abs(enemy.x - player.x) < safeDistance
-
-            );
+            } while (Math.abs(enemy.x - player.x) < safeDistance);
         }
 
-        setEnemyPositionAwayFromPlayer(); // Set initial enemy position
+        setEnemyPositionAwayFromPlayer();
 
+        function gameLoop() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            updateBackground();
+            drawBackground();
+            updatePlayer();
+            drawPlayer();
+            updateEnemy();
+            drawEnemy();
+            checkCollision();
+            updateScore();
+            requestAnimationFrame(gameLoop);
+        }
 
-        // Start the game loop
         gameLoop();
     </script>
 </body>
-
 </html>
