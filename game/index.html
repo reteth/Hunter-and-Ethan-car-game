@@ -7,6 +7,10 @@
             margin: 0;
             overflow: hidden;
             background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         canvas {
@@ -18,10 +22,10 @@
 
         #score {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 20px; 
+            left: 20px; 
             font-size: 24px;
-            color: #000;
+            color: #fff; 
         }
     </style>
 </head>
@@ -49,11 +53,13 @@
         backgroundImage1.src = "images/npd.png";
         const backgroundImage2 = new Image();
         backgroundImage2.src = "images/sbhs.png";
+        const backgroundImage3 = new Image();
+        backgroundImage3.src = "images/nash.png";
 
         const background = {
             x: 0,
             y: 0,
-            speed: 0.5,
+            speed: 0.05,
             currentBackground: backgroundImage1
         };
 
@@ -79,8 +85,6 @@
 
         let score = 0;
 
-        
-
         function updateBackground() {
             background.x -= player.speed * background.speed;
             if (background.x < -background.currentBackground.width) {
@@ -96,14 +100,17 @@
         function updateScore() {
             score++;
             document.getElementById("score").textContent = `Score: ${score}`;
-            if (score >= 3000) {
+            if (score >= 1900) {
                 background.currentBackground = backgroundImage2;
             }
+            if (score >= 3100) {
+                background.currentBackground = backgroundImage3;
+            }
             enemy.speed = 1 + score / 10000;
-            
-            if (score >= 5000 && !winAlertShown) {
+
+            if (score >= 3800 && !winAlertShown) {
                 winAlertShown = true;
-                alert("Congratulations! You won the game!");
+                alert("You ate KFC with Nash, you are fat");
                 location.reload();
             }
         }
@@ -120,8 +127,7 @@
         }
 
         function drawPlayer() {
-            context.save(); // Save the current context state
-            // Flip horizontally if "A" key is pressed
+            context.save();
             if (keys["a"]) {
                 context.scale(-1, 1);
                 context.drawImage(player.image, -player.x - player.width / 2, player.y - player.height / 2,
@@ -130,23 +136,22 @@
                 context.drawImage(player.image, player.x - player.width / 2, player.y - player.height / 2,
                                   player.width, player.height);
             }
-            context.restore(); // Restore the context state
+            context.restore();
         }
 
         function drawEnemy() {
-            context.save(); // Save the current context state
-            if (enemy.x > player.x) { // Flip horizontally if enemy is moving left
-                context.scale(-1,1);
+            context.save();
+            if (enemy.x > player.x) {
+                context.scale(-1, 1);
                 context.drawImage(enemy.image, -enemy.x - enemy.width / 2, enemy.y - enemy.height / 2,
                                   enemy.width, enemy.height);
             } else {
                 context.drawImage(enemy.image, enemy.x - enemy.width / 2, enemy.y - enemy.height / 2,
                                   enemy.width, enemy.height);
             }
-            context.restore(); // Restore the context state
-        
-       
+            context.restore();
         }
+
         function updateEnemy() {
             const dx = player.x - enemy.x;
             const dy = player.y - enemy.y;
@@ -175,9 +180,8 @@
                 playerTop < enemyBottom &&
                 playerBottom > enemyTop
             ) {
-                // Collision detected
-                collisionAlertShown = true; // Set the flag to true
-                alert("You got hit by the enemy! Game over.");
+                collisionAlertShown = true;
+                alert("Game over your score was " + score);
                 location.reload();
             }
         }
@@ -204,6 +208,10 @@
             requestAnimationFrame(gameLoop);
         }
 
+        alert("Welcome to Invercargill driving sim!");
+        alert("W A S D to move");
+        alert("Get to the Creedy's house for KFC")
+        
         gameLoop();
     </script>
 </body>
