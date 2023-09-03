@@ -42,6 +42,12 @@
 
         let collisionAlertShown = false;
         let winAlertShown = false;
+        let enableEnemy2 = false; 
+
+        const difficulty = prompt("Choose a difficulty ('easy' or 'hard'):");
+        if (difficulty && difficulty.toLowerCase() === "hard") {
+            enableEnemy2 = true;
+        }
 
         const keys = {};
         window.addEventListener("keydown", (event) => { keys[event.key] = true; });
@@ -51,6 +57,8 @@
         playerImage.src = "images/Miata-1.png";
         const enemyImage = new Image();
         enemyImage.src = "images/Prius-1.png";
+        const enemyImage2 = new Image();
+        enemyImage2.src = "images/Prius-1.png";
         const backgroundImage1 = new Image();
         backgroundImage1.src = "images/npd.png";
         const backgroundImage2 = new Image();
@@ -84,6 +92,17 @@
             image: enemyImage,
             speed: 2
         };
+
+        const enemy2 = {
+            x: Math.random() * canvas.width, // Initial x position (random)
+            y: -100, // Start above the canvas
+            width: 100,
+            height: 50,
+            color: "green", // Modify the color as needed
+            image: enemyImage2,
+            speed: 2 // Enemy movement speed
+        };
+        
 
         let score = 0;
 
@@ -164,6 +183,20 @@
             }
         }
 
+        function updateEnemy2() {
+            enemy2.y += enemy2.speed;
+
+            // Reset the second enemy position when it goes below the canvas
+            if (enemy2.y > canvas.height) {
+                enemy2.x = Math.random() * canvas.width;
+                enemy2.y = -100;
+            }
+        }
+        function drawEnemy2() {
+            context.fillStyle = enemy2.color;
+            context.drawImage(enemy2.image, enemy2.x - enemy2.width / 2, enemy2.y - enemy2.height / 2, enemy2.width, enemy2.height);
+        }
+
         function checkCollision() {
             const playerLeft = player.x - player.width / 2;
             const playerRight = player.x + player.width / 2;
@@ -187,6 +220,31 @@
                 location.reload();
             }
         }
+        function checkCollision2() {
+            const playerLeft = player.x - player.width / 2;
+            const playerRight = player.x + player.width / 2;
+            const playerTop = player.y - player.height / 2;
+            const playerBottom = player.y + player.height / 2;
+
+            const enemy2Left = enemy2.x - enemy2.width / 2;
+            const enemy2Right = enemy2.x + enemy2.width / 2;
+            const enemy2Top = enemy2.y - enemy2.height / 2;
+            const enemy2Bottom = enemy2.y + enemy2.height / 2;
+
+            if (
+                !collisionAlertShown &&
+                playerLeft < enemy2Right &&
+                playerRight > enemy2Left &&
+                playerTop < enemy2Bottom &&
+                playerBottom > enemy2Top
+            ) {
+                collisionAlertShown = true;
+                alert("Game over your score was " + score);
+                location.reload();
+            }
+        }
+
+      
 
         function setEnemyPositionAwayFromPlayer() {
             const safeDistance = 350;
@@ -197,6 +255,7 @@
 
         setEnemyPositionAwayFromPlayer();
 
+
         function gameLoop() {
             context.clearRect(0, 0, canvas.width, canvas.height);
             updateBackground();
@@ -205,15 +264,22 @@
             drawPlayer();
             updateEnemy();
             drawEnemy();
+
+            if (enableEnemy2) {
+                updateEnemy2(); 
+                drawEnemy2();   
+                checkCollision2(); 
+            }
+
             checkCollision();
             updateScore();
             requestAnimationFrame(gameLoop);
         }
-
+        
         alert("Welcome to Invercargill driving sim!");
         alert("W A S D to move");
         alert("Get to the Creedy's house for KFC")
-        
+         
         gameLoop();
     </script>
 </body>
