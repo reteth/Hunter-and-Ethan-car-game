@@ -10,7 +10,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-image: url('images/map1.png');
+            background-image: url('images/map1.png'); 
             background-size: cover;
         }
 
@@ -38,15 +38,21 @@
         const canvas = document.getElementById("gameCanvas");
         const context = canvas.getContext("2d");
         canvas.width = 800;
-        canvas.height = 500;
+        canvas.height = 500; 
 
         let collisionAlertShown = false;
         let winAlertShown = false;
         let enableEnemy2 = false; 
 
-        const difficulty = prompt("Choose a difficulty ('easy' or 'hard'):");
-        if (difficulty && difficulty.toLowerCase() === "hard") {
-            enableEnemy2 = true;
+        while (true) {
+            const difficulty = prompt("Choose a difficulty ('easy' or 'hard'):");
+
+            if (difficulty && difficulty.toLowerCase() === "easy") {
+                break; // Exit the loop if 'easy' is entered
+            } else if (difficulty && difficulty.toLowerCase() === "hard") {
+                enableEnemy2 = true;
+                break; // Exit the loop if 'hard' is entered
+            }
         }
 
         const keys = {};
@@ -54,59 +60,59 @@
         window.addEventListener("keyup", (event) => { keys[event.key] = false; });
 
         const playerImage = new Image();
-        playerImage.src = "images/Miata-1.png";
+        playerImage.src = "images/Miata-1.png"; //Player sprite
         const enemyImage = new Image();
-        enemyImage.src = "images/Prius-1.png";
+        enemyImage.src = "images/Prius-1.png"; //Enemy 1 sprite
         const enemyImage2 = new Image();
-        enemyImage2.src = "images/Prius-1.png";
+        enemyImage2.src = "images/fordranger.png"; //Enemy 2 sprite
         const backgroundImage1 = new Image();
-        backgroundImage1.src = "images/npd.png";
+        backgroundImage1.src = "images/npd.png"; //First background
         const backgroundImage2 = new Image();
-        backgroundImage2.src = "images/sbhs.png";
+        backgroundImage2.src = "images/sbhs.png"; //Second background
         const backgroundImage3 = new Image();
-        backgroundImage3.src = "images/nash.png";
+        backgroundImage3.src = "images/nash.png"; //Third background
 
-        const background = {
-            x: 0,
-            y: 0,
-            speed: 0.05,
-            currentBackground: backgroundImage1
+        const background = { //Parrelex background
+            x: 0, //Background X location
+            y: 0, //Background Y location
+            speed: 0.05, //Background move speed
+            currentBackground: backgroundImage1 //Link to First background sprite
         };
 
-        const player = {
-            x: canvas.width / 2,
-            y: canvas.height - 50,
-            width: 100,
-            height: 50,
-            color: "blue",
-            speed: 6,
-            image: playerImage
+        const player = { //Player constants 
+            x: canvas.width / 2, //Player X Pos
+            y: canvas.height - 50, //Player Y Pos
+            width: 100, //Player width
+            height: 50, //Player height
+            color: "blue", //Player base color if sprite not loading
+            speed: 6, //Player Y and X speed
+            image: playerImage //Link to Player sprite
         };
 
-        const enemy = {
-            x: canvas.width / 2,
-            y: 380,
-            width: 100,
-            height: 50,
-            color: "red",
-            image: enemyImage,
-            speed: 2
+        const enemy = { //Enemy 1 constants
+            x: canvas.width / 2, //Enemy 1 X Pos
+            y: 380, //Enemy 1 Y pos 
+            width: 100, //Enemy 1 width
+            height: 50, //Enemy 1 height
+            color: "red", //Enemy 1 base color if sprite not loading
+            image: enemyImage, //Link to Enemy 1 sprite
+            speed: 2 //Enemy 1 speed
         };
 
-        const enemy2 = {
-            x: Math.random() * canvas.width, // Initial x position (random)
-            y: -100, // Start above the canvas
-            width: 100,
-            height: 50,
+        const enemy2 = { //Enemy 2 constants 
+            x: Math.random() * canvas.width, //Enemy 2 X Pos
+            y: -100, //Enemy 2 Y Pos
+            width: 75, //Enemy 2 width
+            height: 150, //Enemy 2 height
             color: "green", // Modify the color as needed
-            image: enemyImage2,
-            speed: 2 // Enemy movement speed
+            image: enemyImage2, //Link to Enemy 2 sprite
+            speed: 2 // Enemy 2 movement speed
         };
         
 
-        let score = 0;
+        let score = 0; //Sets score to 0 at start of the game
 
-        function updateBackground() {
+        function updateBackground() { 
             background.x -= player.speed * background.speed;
             if (background.x < -background.currentBackground.width) {
                 background.x = 0;
