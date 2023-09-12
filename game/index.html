@@ -32,9 +32,17 @@
     </style>
 </head>
 <body>
+
+    
+
     <canvas id="gameCanvas"></canvas>
     <div id="score">Score: 0</div>
+
+
     <script>
+
+
+
         const canvas = document.getElementById("gameCanvas");
         const context = canvas.getContext("2d");
         canvas.width = 800;
@@ -106,43 +114,48 @@
             height: 150, //Enemy 2 height
             color: "green", // Modify the color as needed
             image: enemyImage2, //Link to Enemy 2 sprite
-            speed: 2 // Enemy 2 movement speed
+            speed: 4.5 // Enemy 2 movement speed
         };
+
+        setTimeout(function() {
+            const backgroundMusic = document.getElementById("backgroundMusic");
+            backgroundMusic.autoplay = true;
+        }, 2000);
         
 
         let score = 0; //Sets score to 0 at start of the game
 
-        function updateBackground() { 
+        function updateBackground() {  //Updates background
             background.x -= player.speed * background.speed;
             if (background.x < -background.currentBackground.width) {
                 background.x = 0;
             }
         }
 
-        function drawBackground() {
+        function drawBackground() { //Draws background
             context.drawImage(background.currentBackground, background.x, background.y,
                               canvas.width + background.currentBackground.width, canvas.height / 1.8);
         }
 
-        function updateScore() {
+        function updateScore() { //Updates score
             score++;
             document.getElementById("score").textContent = `Score: ${score}`;
-            if (score >= 1900) {
+            if (score >= 1900) { //Changes background
                 background.currentBackground = backgroundImage2;
             }
-            if (score >= 3100) {
+            if (score >= 3100) {//Changes background
                 background.currentBackground = backgroundImage3;
             }
-            enemy.speed = 1 + score / 10000;
+            enemy.speed = 1 + score / 10000; //Changes enemy speed based on score
 
             if (score >= 3800 && !winAlertShown) {
                 winAlertShown = true;
-                alert("You ate KFC with Nash, you are fat");
-                location.reload();
+                alert("You ate KFC with Nash, you are fat"); //Win alert
+                location.reload(); //Reloads page
             }
         }
 
-        function updatePlayer() {
+        function updatePlayer() { //Updates player
             if (keys["w"] && player.y > 270) player.y -= player.speed;
             if (keys["s"] && player.y < 450) player.y += player.speed;
             if (keys["a"] && player.x > 0) player.x -= player.speed;
